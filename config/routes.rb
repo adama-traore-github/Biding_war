@@ -55,5 +55,19 @@ Rails.application.routes.draw do
   get 'users/edit'
   get 'users/update'
   get 'users/destroy'
+
+
+  devise_for :users
+
+  resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :products, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :bids, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :histories, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :payments, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :reviews, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :notifications, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :categories, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+
+
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
