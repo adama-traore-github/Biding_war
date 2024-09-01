@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Enchères en Cours - BidingWar</title>
+  <title>BidingWar</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
@@ -23,47 +23,19 @@
       height: 180px;
       object-fit: cover;
     }
-    .btn-participate {
-      background-color: #007bff;
-      color: white;
-      border: none;
-    }
-    .btn-participate:hover {
-      background-color: #0056b3;
-    }
-    .btn-login {
-      background-color: #6c757d;
-      color: white;
-      border: none;
-    }
-    .btn-login:hover {
-      background-color: #5a6268;
-    }
-    .container {
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body>
-  <!-- Contenu principal -->
-  <div class="container">
-    <h1 class="mb-4">Enchères en Cours</h1>
+  <div class="container mt-4">
     <div class="row">
       <% @bids.each do |bid| %>
         <div class="col-md-4 mb-4">
           <div class="card">
-            <img src="<%= bid.image_url || 'default-image.jpg' %>" class="card-img-top" alt="<%= bid.title %>">
+            <img src="<%= bid.image_url %>" class="card-img-top" alt="<%= bid.title %>">
             <div class="card-body">
               <h5 class="card-title"><%= bid.title %></h5>
               <p class="card-text"><%= bid.description %></p>
-              <p class="card-text">Prix actuel: <%= number_to_currency(bid.current_price) %></p>
-              <p class="card-text">Fin de l'enchère: <%= bid.end_time.strftime("%d %b %Y, %H:%M") %></p>
-              <%= link_to 'Voir plus', bid_path(bid), class: 'btn btn-primary' %>
-              <% if user_signed_in? %>
-                <%= link_to 'Participer', participate_bid_path(bid), method: :post, class: 'btn btn-participate' %>
-              <% else %>
-                <%= link_to 'Participer', new_user_session_path, class: 'btn btn-login' %>
-              <% end %>
+              <a href="<%= bid_path(bid) %>" class="btn btn-primary">Voir plus</a>
             </div>
           </div>
         </div>

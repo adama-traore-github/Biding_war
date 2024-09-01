@@ -1,6 +1,12 @@
 class PaymentsController < ApplicationController
   before_action :authenticate_user!
 
+  def search
+    @query = params[:query]
+    @products = Product.where('name LIKE ?', "%#{@query}%")
+    render :index
+  end
+  
   def index
     @payments = Payment.all
     render json: @payments

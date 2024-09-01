@@ -1,9 +1,17 @@
 Rails.application.routes.draw do
+  get 'pages/contact'
+  get 'home/index'
   devise_for :users
 
-  # Ressources principales
-  resources :users, only: [:index, :show, :edit, :update, :destroy]
-  resources :products
+  # Définir la route pour les catégories
+  get 'products/category/:name', to: 'products#category', as: 'category_products'
+  get 'contact_us', to: 'pages#contact', as: 'contact_us'
+  resources :products do
+    collection do
+      get 'search'
+    end
+  end
+
   resources :bids
   resources :histories
   resources :payments
@@ -11,14 +19,5 @@ Rails.application.routes.draw do
   resources :notifications
   resources :categories
 
-  # Route racine
   root 'home#index'
-
-  # Routes personnalisées pour Devise
-  get '/login', to: 'devise/sessions#new', as: 'login'
-  post '/login', to: 'devise/sessions#create'
-  delete '/logout', to: 'devise/sessions#destroy', as: 'logout'
-
-  get '/signup', to: 'devise/registrations#new', as: 'signup'
-  post '/signup', to: 'devise/registrations#create'
 end
