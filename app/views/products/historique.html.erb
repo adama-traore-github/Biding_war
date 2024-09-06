@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historique des Enchères - BidingWar</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-4">
+    <h1 class="mb-4">Historique des Enchères</h1>
+    <div class="row">
+      <% @products.each do |product| %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <%= image_tag(product.image.attached? ? rails_blob_path(product.image, only_path: true) : 'default-image.jpg', class: 'card-img-top', alt: product.name) %>
+            <div class="card-body">
+              <h5 class="card-title"><%= product.name %></h5>
+              <p class="card-text"><%= product.description %></p>
+              <p class="card-text">Prix Initial : <%= number_to_currency(product.initial_price) %></p>
+              <p class="card-text">Prix Final : <%= number_to_currency(product.current_price) %></p>
+              <p class="card-text text-danger">Enchère terminée</p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</body>
+</html>

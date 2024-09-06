@@ -11,6 +11,11 @@ class UsersController < ApplicationController
     render json: @user
   end
 
+  def profile
+    @user = User.find(params[:id])
+    redirect_to root_path, alert: "Vous n'êtes pas autorisé à accéder à ce profil." unless @user == current_user
+  end
+
   def new
     @user = User.new
   end

@@ -1,67 +1,56 @@
 class BidsController < ApplicationController
-  before_action :authenticate_user!, only: [:participate, :create, :edit, :update, :destroy]
-
-  def index
-    @bids = Bid.where('end_time >= ?', Time.current) # Filtrer les enchères en cours
-  end
-
-  def participate
-    @bid = Bid.find(params[:id])
-    if user_signed_in?
-      # Logique pour permettre à l'utilisateur de participer à l'enchère
-      current_user.bids << @bid # Exemple simple, ajouter l'enchère à l'utilisateur
-      flash[:notice] = "Vous participez maintenant à l'enchère."
-      redirect_to bid_path(@bid)
-    else
-      flash[:alert] = "Vous devez être connecté pour participer à une enchère."
-      redirect_to new_user_session_path
-    end
-  end
-
-  def show
-    @bid = Bid.find(params[:id])
-  end
+  before_action :authenticate_user! # Assure que l'utilisateur est authentifié avant d'accéder aux actions
 
   def new
-    @bid = Bid.new
+    @product = Product.find(params[:product_id]) # Trouve le produit par son ID
+    @bid = @product.bids.build # Crée une nouvelle enchère pour le produit
+  end
+
+  def index
+    @bids = Bid.joins(:product).where('products.auction_end_date >= ?', Time.current) # Sélectionne les enchères dont la date de fin est dans le futur
+    # Pour supprimer les enchères expirées
+    Bid.joins(:product).where('products.auction_end_date < ?', Time.current).destroy_all # Supprime les enchères dont la date de fin est passée
   end
 
   def create
-    @bid = current_user.bids.build(bid_params)
-    if @bid.save
-      flash[:notice] = "Enchère créée avec succès."
-      redirect_to @bid
+    @product = Product.find(params[:product_id]) # Trouve le produit par son ID
+    @bid = @product.bids.build(bid_params) # Crée une nouvelle enchère avec les paramètres fournis
+    @bid.user = current_user # Associe l'enchère à l'utilisateur actuel
+
+    if @bid.amount > @product.current_price # Vérifie si le montant de l'enchère est supérieur au prix actuel
+      if @bid.save # Tente de sauvegarder l'enchère
+        flash[:notice] = 'Votre enchère a été placée avec succès.' # Affiche un message de succès
+        redirect_to bids_path  # Redirection vers la liste des enchères
+      else
+        flash.now[:alert] = 'Enchère non valide.' # Affiche un message d'erreur si l'enchère n'est pas valide
+        render :new # Rends le formulaire de nouvelle enchère
+      end
     else
-      flash[:alert] = "Erreur lors de la création de l'enchère."
-      render :new
+      flash.now[:alert] = 'Le montant de l\'enchère doit être supérieur au prix actuel.' # Affiche un message d'erreur si le montant est insuffisant
+      render :new # Rends le formulaire de nouvelle enchère
     end
   end
 
-  def edit
-    @bid = Bid.find(params[:id])
-  end
+  def place_bid
+    @product = Product.find(params[:product_id]) # Trouve le produit par son ID
+    @bid = @product.bids.build(bid_params) # Crée une nouvelle enchère avec les paramètres fournis
+    @bid.user = current_user # Associe l'enchère à l'utilisateur actuel
 
-  def update
-    @bid = Bid.find(params[:id])
-    if @bid.update(bid_params)
-      flash[:notice] = "Enchère mise à jour avec succès."
-      redirect_to @bid
+    if @bid.amount > @product.current_price # Vérifie si le montant de l'enchère est supérieur au prix actuel
+      if @bid.save # Tente de sauvegarder l'enchère
+        @bid.update(finalized_at: 24.hours.from_now) # Définir le délai de 24 heures pour la finalisation de l'enchère
+        render json: { success: true, message: 'Votre enchère a été placée avec succès.', finalized_at: @bid.finalized_at.iso8601 } # Renvoie une réponse JSON avec un message de succès
+      else
+        render json: { success: false, message: 'Enchère non valide.' } # Renvoie une réponse JSON avec un message d'erreur
+      end
     else
-      flash[:alert] = "Erreur lors de la mise à jour de l'enchère."
-      render :edit
+      render json: { success: false, message: 'Le montant de l\'enchère doit être supérieur au prix actuel.' } # Renvoie une réponse JSON avec un message d'erreur si le montant est insuffisant
     end
-  end
-
-  def destroy
-    @bid = Bid.find(params[:id])
-    @bid.destroy
-    flash[:notice] = "Enchère supprimée avec succès."
-    redirect_to bids_path
   end
 
   private
 
   def bid_params
-    params.require(:bid).permit(:amount, :product_id)
+    params.require(:bid).permit(:amount) # Définit les paramètres autorisés pour une enchère
   end
 end

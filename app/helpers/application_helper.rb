@@ -1,2 +1,6 @@
 module ApplicationHelper
-end
+    def active_class(controller_name)
+      'active' if current_page?(controller: controller_name)
+    end
+  end
+  
