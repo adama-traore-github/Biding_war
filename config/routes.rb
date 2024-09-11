@@ -1,9 +1,13 @@
 Rails.application.routes.draw do
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
+  resources :posts 
+  resources :utilisateurs
   # Pages statiques
   get 'pages/contact'
   get 'home/index'
   get 'contact_us', to: 'pages#contact', as: 'contact_us'
-
+  
   # Devise pour l'authentification des utilisateurs
   devise_for :users
 
