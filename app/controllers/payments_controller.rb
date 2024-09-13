@@ -31,12 +31,18 @@ class PaymentsController < ApplicationController
     if @payment.save
       # Sauvegarde réussie, renvoie le paiement créé au format JSON avec le statut :created
       render json: @payment, status: :created
+      #configuration de l'email de validation de mail de payement 
+      PaymentMailer.payment_success_email(current_user, @auction).deliver_later
+      flash[:notice] = "Paiement réussi ! Un email de confirmation a été envoyé."
+      redirect_to auction_path(@auction)
     else
       # Échec de la sauvegarde, renvoie les erreurs au format JSON avec le statut :unprocessable_entity
       render json: @payment.errors, status: :unprocessable_entity
+      flash[:alert] = "Échec du paiement."
+      render :new
     end
   end
-
+  
   def edit
     # Trouve un paiement par son ID pour l'éditer
     @payment = Payment.find(params[:id])

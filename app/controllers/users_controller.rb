@@ -24,8 +24,11 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       render json: @user, status: :created
+      UserMailer.welcome_email(@user).deliver_later
+      redirect_to root_path, notice: 'Inscription réussie, veuillez vérifier votre email.'
     else
       render json: @user.errors, status: :unprocessable_entity
+      render :new
     end
   end
 
