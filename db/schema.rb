@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_09_05_230853) do
+ActiveRecord::Schema.define(version: 2024_09_14_155917) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -161,6 +161,7 @@ ActiveRecord::Schema.define(version: 2024_09_05_230853) do
     t.string "last_sign_in_ip"
     t.string "encrypted_password", default: "", null: false
     t.datetime "remember_created_at"
+    t.boolean "admin", default: false
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

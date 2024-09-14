@@ -1,75 +1,100 @@
 class ProductsController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy] # Assure que l'utilisateur est authentifié pour les actions de création, édition, mise à jour et suppression
-  before_action :set_product, only: [:show, :edit, :update, :destroy] # Définit le produit pour les actions qui nécessitent un produit spécifique
+  # Authentification obligatoire pour certaines actions
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :historique]
+  
+  # Définit le produit en fonction de l'ID avant certaines actions
+  before_action :set_product, only: [:show, :edit, :update, :destroy]
 
-  # Enchères en cours
+  # Affiche tous les produits ou ceux d'une catégorie spécifique
   def index
-    @categories = Category.all # Récupère toutes les catégories pour la vue
-    @products = if params[:category_id]
-                  @category = Category.find(params[:category_id]) # Trouve la catégorie si un ID de catégorie est fourni
-                  @category.products.where('auction_end_date >= ?', Time.current) # Filtre les produits par date de fin d'enchère
-                else
-                  Product.where('auction_end_date >= ?', Time.current) # Filtre tous les produits par date de fin d'enchère
-                end
-  end
-
-  # Historique des enchères terminées
-  def historique
-    @products = Product.where('auction_end_date < ?', Time.current) # Ne montre que les produits dont l'enchère est terminée
-  end
-
-  def new
-    @product = Product.new # Crée une nouvelle instance de produit pour le formulaire de création
-  end
-
-  def create
-    @product = current_user.products.build(product_params) # Construit un nouveau produit associé à l'utilisateur actuel
-    if @product.save
-      redirect_to root_path, notice: 'Produit créé avec succès.' # Redirection en cas de succès
+    @categories = Category.all
+    if params[:category_id]
+      @category = Category.find(params[:category_id])
+      @products = @category.products # Produits filtrés par catégorie
     else
-      flash.now[:alert] = @product.errors.full_messages.to_sentence # Affiche les erreurs en cas d'échec de la sauvegarde
-      render :new # Rendu du formulaire de création avec les erreurs
+      @products = Product.all # Tous les produits
     end
+  end
+
+  # Affiche les produits de l'utilisateur connecté
+  def user_products
+    @products = current_user.products
+    render :index # Affiche la vue index avec les produits de l'utilisateur
   end
   
-  def edit
-    # Prépare l'instance de produit pour le formulaire d'édition
+  # Affiche un produit spécifique
+  def show
   end
 
+  # Affiche l'historique des enchères terminées
+  def historique
+    @products = Product.where('auction_end_date < ?', Time.current) # Produits dont l'enchère est terminée
+  end
+
+  # Formulaire pour créer un nouveau produit
+  def new
+    @product = Product.new
+  end
+
+  # Crée un nouveau produit et l'associe à l'utilisateur actuel
+  def create
+    @product = current_user.products.build(product_params)
+    if @product.save
+      redirect_to root_path, notice: 'Produit créé avec succès.' # Redirection après création réussie
+    else
+      puts @product.errors.full_messages # Affiche les erreurs dans la console
+      flash.now[:alert] = @product.errors.full_messages.to_sentence # Affiche les erreurs à l'utilisateur
+      render :new # Réaffiche le formulaire en cas d'échec
+    end
+  end
+
+  # Formulaire d'édition d'un produit
+  def edit
+  end
+
+  # Met à jour un produit existant
   def update
     if @product.update(product_params)
-      render json: @product # Rendu du produit mis à jour au format JSON
+      render json: @product # Retourne le produit mis à jour en JSON
     else
-      render json: @product.errors, status: :unprocessable_entity # Rendu des erreurs de mise à jour au format JSON
+      render json: @product.errors, status: :unprocessable_entity # Retourne les erreurs en JSON
     end
   end
 
+  def search
+    @query = params[:query]
+    @products = Product.where('name LIKE ?', "%#{@query}%")
+  end
+
+  # Supprime un produit
   def destroy
-    @product.destroy # Supprime le produit
-    head :no_content # Réponse vide après la suppression
+    @product.destroy
+    head :no_content # Réponse sans contenu après suppression
   end
 
+  # Filtre les produits par catégorie
   def category
-    @category = Category.find_by(name: params[:name]) # Trouve la catégorie par nom
+    @category = Category.find_by(name: params[:name])
     if @category
-      @products = @category.products.where('auction_end_date >= ?', Time.current) # Filtre les produits de la catégorie par date de fin d'enchère
+      @products = @category.products # Filtre par catégorie
     else
-      @products = Product.where('auction_end_date >= ?', Time.current) # Filtre tous les produits par date de fin d'enchère si la catégorie n'est pas trouvée
+      @products = Product.all # Retourne tous les produits si aucune catégorie n'est trouvée
     end
-    render :index # Rendu de la vue index avec les produits filtrés
+    render :index
   end
 
   private
 
+  # Recherche un produit par ID
   def set_product
-    @product = Product.find_by(id: params[:id]) # Trouve un produit par ID
+    @product = Product.find_by(id: params[:id])
     if @product.nil?
-      render json: { error: 'Produit non trouvé' }, status: :not_found # Affiche une erreur si le produit n'est pas trouvé
+      render json: { error: 'Product not found' }, status: :not_found # Retourne une erreur si le produit n'est pas trouvé
     end
   end
 
+  # Permet de filtrer les paramètres autorisés pour un produit
   def product_params
-    # Définit les paramètres autorisés pour un produit
-    params.require(:product).permit(:name, :description, :category_id, :initial_price, :auction_start_date, :auction_end_date, :image)
+    params.require(:product).permit(:name, :description, :category_id, :initial_price, :auction_start_date, :auction_end_date, :image)  
   end
 end

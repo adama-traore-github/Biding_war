@@ -1,4 +1,17 @@
 Rails.application.routes.draw do
+  namespace :admin do
+      resources :bids
+      resources :categories
+      resources :faqs
+      resources :histories
+      resources :notifications
+      resources :payments
+      resources :products
+      resources :reviews
+      resources :users
+
+      root to: "bids#index"
+    end
   # Pages statiques
   get 'pages/contact'
   get 'home/index'

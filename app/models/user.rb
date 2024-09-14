@@ -25,4 +25,13 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :role, presence: true # Assurer que le rôle est présent
+
+  
+  after_create :send_welcome_email
+
+  private
+
+  def send_welcome_email
+    UserMailer.welcome_email(self).deliver_now
+  end
 end
