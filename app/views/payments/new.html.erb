@@ -1,2 +1,11 @@
 <h1>Payments#new</h1>
 <p>Find me in app/views/payments/new.html.erb</p>
+<% if @auction.ended? && current_user == @auction.winner %>
+  <%= form_tag auction_payments_path(@auction), id: 'payment-form' do %>
+    <!-- Formulaire Stripe ici -->
+    <div id="card-element"></div>
+    <button type="submit">Payer maintenant</button>
+  <% end %>
+<% else %>
+  <p>Le paiement sera disponible uniquement pour le gagnant lorsque l'enchère sera terminée.</p>
+<% end %>

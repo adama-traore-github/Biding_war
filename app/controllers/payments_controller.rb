@@ -23,11 +23,17 @@ class PaymentsController < ApplicationController
   def new
     # Crée une nouvelle instance de paiement pour le formulaire
     @payment = Payment.new
+    # Vérifie si l'enchère est terminée et que l'utilisateur actuel est le gagnant
+    unless @auction.ended? && current_user == @auction.winner
+      flash[:alert] = "Vous n'êtes pas autorisé à effectuer ce paiement."
+      redirect_to auction_path(@auction)
+    end
   end
 
   def create
     # Crée une nouvelle instance de paiement avec les paramètres fournis
     @payment = Payment.new(payment_params)
+    @auction = Auction.find(params[:auction_id])
     if @payment.save
       # Sauvegarde réussie, renvoie le paiement créé au format JSON avec le statut :created
       render json: @payment, status: :created
@@ -40,6 +46,12 @@ class PaymentsController < ApplicationController
       render json: @payment.errors, status: :unprocessable_entity
       flash[:alert] = "Échec du paiement."
       render :new
+    end
+    if @auction.ended? && current_user == @auction.winner
+      # Logique de paiement Stripe ici...
+    else
+      flash[:alert] = "Paiement non autorisé."
+      redirect_to auction_path(@auction)
     end
   end
   
@@ -75,3 +87,4 @@ class PaymentsController < ApplicationController
     params.require(:payment).permit(:user_id, :product_id, :amount, :status)
   end
 end
+
