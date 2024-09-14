@@ -5,42 +5,43 @@
 Ce projet est une application web de gestion des enchères , permettant aux utilisateurs de créer, gérer et participer à des enchères sur divers produits. Il utilise le framework Ruby on Rails et repose sur plusieurs fonctionnalités clés comme l'authentification des utilisateurs via Devise, la gestion des rôles, et la création et la gestion des enchères. Active Storage est intégré pour gérer les fichiers et les images associés aux produits, assurant ainsi un stockage et une gestion efficaces des fichiers téléversés. Pour démarrer avec le projet, clonez le dépôt avec la commande `git clone <URL_DU_REPOSITORY>`, puis installez les dépendances en exécutant `bundle install`. Configurez la base de données avec `rails db:create db:migrate`, et lancez le serveur avec `rails server`. Assurez-vous également de configurer Active Storage en exécutant `rails active_storage:install` . 
 
 **Structure complete du projet**
-    /app/admin/
-    /app/assets/
-    /app/channels/
-    /app/controller/
-    /app/helpers/
-    /app/javascript/
-    /app/jobs/
-    /app/mailers/
-    /app/models/
-    /app/views/
-    /bin/
-    /config/
-    /db/
-    /lib/
-    /log/
-    /node_modules/
-    /public/
-    /storage/
-    /test/
-    /tmp/
-    /vendor/
-    /.browserslistrc
-    /.gitattributes
-    /.gitignore
-    /.ruby-version
-    /badel.config.js
-    /biding_war_development.sql
-    /config.ru
-    /Gemfile
-    /Gemfile.lock
-    /package-lock.json
-    /package.json
-    /postcss.config.js
-    /Rakefile
-    /README.md
-    /yarn.lock
+
+    */app/admin/*
+    */app/assets/*
+    */app/channels/*
+    */app/controller/*
+    */app/helpers/*
+    */app/javascript/*
+    */app/jobs/*
+    */app/mailers/*
+    */app/models/*
+    */app/views/*
+    */bin/*
+    */config/*
+    */db/*
+    */lib/*
+    */log/*
+    */node_modules/*
+    */public/*
+    */storage/*
+    */test/*
+    */tmp/*
+    */vendor/*
+    */.browserslistrc*
+    */.gitattributes*
+    */.gitignore*
+    */.ruby-version*
+    */badel.config.js*
+    */biding_war_development.sql*
+    */config.ru*
+    */Gemfile*
+    */Gemfile.lock*
+    */package-lock.json*
+    */package.json*
+    */postcss.config.js*
+    */Rakefile*
+    */README.md*
+    */yarn.lock*
 
 **Tache du Developer Back-end**
 
@@ -85,10 +86,14 @@ Ce projet est une application web de gestion des enchères , permettant aux util
 
 
 **Payement**
-    * 1 - Les utilisateurs peuvent interagir avec les enchères, et leurs offres sont enregistrées.*
-    * 2 - Le bouton de paiement Stripe est automatiquement désactivé tant que l'enchère n'est pas terminée.*
-    * 3 - Une fois l'enchère terminée, le bouton de paiement est activé uniquement pour l'utilisateur qui a remporté l'enchère.*
-    * 4 - La sécurité est renforcée dans le contrôleur pour s'assurer que seuls les gagnants peuvent effectuer un paiement.*
+    
+    *1 - Les utilisateurs peuvent interagir avec les enchères, et leurs offres sont enregistrées.*
+
+    *2 - Le bouton de paiement Stripe est automatiquement désactivé tant que l'enchère n'est pas terminée.*
+
+    *3 - Une fois l'enchère terminée, le bouton de paiement est activé uniquement pour l'utilisateur qui a remporté l'enchère.*
+
+    *4 - La sécurité est renforcée dans le contrôleur pour s'assurer que seuls les gagnants peuvent effectuer un paiement.*
 
 **Maildev**
 
