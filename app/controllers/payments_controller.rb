@@ -1,7 +1,8 @@
 class PaymentsController < ApplicationController
   before_action :authenticate_user!
-
+  
   def new
+
     @product_id = params[:product_id]
     @product = Product.find_by(id: @product_id)
 
@@ -9,6 +10,13 @@ class PaymentsController < ApplicationController
       redirect_to root_path, alert: 'Produit non trouvé.'
     else
       @amount = @product.current_price # Le prix actuel du produit en euros
+
+    # Crée une nouvelle instance de paiement pour le formulaire
+    #@payment = Payment.new
+    # Vérifie si l'enchère est terminée et que l'utilisateur actuel est le gagnant
+   # unless @auction.ended? && current_user == @auction.winner
+      #flash[:alert] = "Vous n'êtes pas autorisé à effectuer ce paiement."
+      #redirect_to auction_path(@auction)
     end
   end
 
@@ -46,3 +54,4 @@ class PaymentsController < ApplicationController
     redirect_to product_path(params[:product_id])
   end
 end
+

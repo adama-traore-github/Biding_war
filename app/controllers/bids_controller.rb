@@ -35,6 +35,8 @@ class BidsController < ApplicationController
     @product = Product.find(params[:product_id]) # Trouve le produit par son ID
     @bid = @product.bids.build(bid_params) # Crée une nouvelle enchère avec les paramètres fournis
     @bid.user = current_user # Associe l'enchère à l'utilisateur actuel
+    @auction = Auction.find(params[:id]),
+    bid = @auction.bids.build(user: current_user, amount: params[:amount])
 
     if @bid.amount > @product.current_price # Vérifie si le montant de l'enchère est supérieur au prix actuel
       if @bid.save # Tente de sauvegarder l'enchère
@@ -54,3 +56,4 @@ class BidsController < ApplicationController
     params.require(:bid).permit(:amount) # Définit les paramètres autorisés pour une enchère
   end
 end
+

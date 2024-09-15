@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Créer des catégories
 art_category = Category.find_or_create_by!(name: 'Art') do |category|
   category.description = 'Catégorie dédiée aux œuvres d\'art.'
@@ -74,3 +75,13 @@ Product.find_or_create_by!(name: 'Produit Beauté') do |product|
   product.description = 'Un produit de beauté exceptionnel pour améliorer votre apparence.'
   product.image.attach(io: File.open(beauty_image_path), filename: 'beauty_product_image.jpeg')
 end
+=======
+# This file should contain all the record creation needed to seed the database with its default values.
+# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
+#
+# Examples:
+#
+#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
+#   Character.create(name: 'Luke', movie: movies.first)
+AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
+>>>>>>> 971f24985a6ceac6209dea3aecf3bf93b63a5c73

@@ -56,8 +56,13 @@ class FaqsController < ApplicationController
       @faqs = Faq.where(role: current_user.role) # Récupère les FAQs pour le rôle de l'utilisateur actuel
       render :index # Rendu de la vue index avec les erreurs
     end
+    #Lorsque l'utilisateur remplis les question et qu'il clique sur envoyer un email sera envoyer par maildev et une notice sera envoyer 
+    @question = params[:question]
+    FaqMailer.faq_question_email(current_user, @question).deliver_later
+    flash[:notice] = "Votre question a été envoyée."
+    redirect_to faqs_path
   end
-
+  
   def update
     @faq = Faq.find(params[:id]) # Trouve la FAQ par son ID
     if @faq.can_respond?(current_user) && @faq.update(answer: params[:faq][:answer], answered_by_user: current_user)

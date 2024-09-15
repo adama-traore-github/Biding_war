@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   get 'pages/contact'
   get 'home/index'
   get 'contact_us', to: 'pages#contact', as: 'contact_us'
-
+  
   # Devise pour l'authentification des utilisateurs
   devise_for :users
 
@@ -30,6 +30,9 @@ Rails.application.routes.draw do
 
   # Gestion des produits avec une action de recherche
   resources :products do
+    scope module: :products do
+      resources :purchases, only: [:new, :create]
+    end
     collection do
       get 'search'
       get 'historique'
@@ -44,7 +47,7 @@ Rails.application.routes.draw do
   # Routes pour les utilisateurs
   get 'users/:id/profile', to: 'users#profile', as: 'user_profile'
   get 'users/:id/products', to: 'products#user_products', as: 'user_products'
-
+  
   # Routes pour d'autres ressources
   resources :bids, only: [:index]
   resources :histories

@@ -25,8 +25,8 @@ development:
   <<: *default
   database: Biding_war_development
   username: postgres
-  password: nostra
-
+  password: PASsing1
+  
  
 
   # The specified database role being used to connect to postgres.
@@ -63,7 +63,7 @@ test:
   <<: *default
   database: Biding_war_test
   username: postgres
-  password: nostra
+  password: PASsing1
 
  
 
@@ -91,5 +91,5 @@ production:
   <<: *default
   database: Biding_war_production
   username: postgres
-  password: nostra
+  password: PASsing1
  
